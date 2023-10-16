@@ -37,6 +37,8 @@ public class GameManager : MonoBehaviour
     public void ChangeGameState()
     {
         gameState = gameState == GameState.ReadingEmoticons ? GameState.Idle : gameState + 1;
+        
+        Debug.Log("ChangeGameState to: " + gameState.ToString());
 
         if (gameState == GameState.ReceivingEmoticons)
         {
