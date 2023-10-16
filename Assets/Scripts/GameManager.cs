@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private GameState gameState = GameState.Idle;
+    
+    [SerializeField]
+    private GameObject playButton;
 
     [SerializeField]
     private SendEmoticon sendEmoticon;
@@ -16,7 +19,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private ReadEmoticon readEmoticon;
-    
+
     enum GameState
     {
         Idle,
@@ -28,12 +31,31 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        sendEmoticon.enabled = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ChangeGameState()
     {
-        
+        gameState = gameState == GameState.ReadingEmoticons ? GameState.Idle : gameState + 1;
+
+        if (gameState == GameState.ReceivingEmoticons)
+        {
+            playButton.SetActive(false);
+            receiveEmoticon.ReceiveEmoticons();
+            ChangeGameState(); //might need to move this to ReceiveEmoticons.
+        }
+        else if (gameState == GameState.SendingEmoticons)
+        {
+            //Once this is called, the user should now be able to perform a gesture or series of taps to send an emoticon
+            //Once they have completed their gestures/taps, they can press the triangle on the bottom right to change the gamestate
+            //The data from the gestures should be sent back to the manager, which will then be given to the readEmoticon script
+            sendEmoticon.enabled = true;
+            playButton.SetActive(true);
+        }
+        else if (gameState == GameState.ReadingEmoticons)
+        {
+            sendEmoticon.enabled = false;
+            readEmoticon.ReadEmoticons(sendEmoticon.GetGestures());
+        }
     }
 }
