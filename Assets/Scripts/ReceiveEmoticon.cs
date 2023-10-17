@@ -5,26 +5,24 @@ using UnityEngine;
 public class ReceiveEmoticon : MonoBehaviour
 {
     private enum Emoticon{
-        Happy,
-        Sad,
-        Angry,
-        Surprised,
-        Disgusted,
-        Fearful,
-        Neutral
+        Like,
+        Heart,
+        Laugh,
+        Smile,
+        Cry,
+        Angry
     }
 
     private Queue<Emoticon> emoticonQueue = new Queue<Emoticon>();
 
     // Initialize the queue with all the emoticons
     void Start(){
-        emoticonQueue.Enqueue(Emoticon.Happy);
-        emoticonQueue.Enqueue(Emoticon.Sad);
+        emoticonQueue.Enqueue(Emoticon.Like);
+        emoticonQueue.Enqueue(Emoticon.Heart);
+        emoticonQueue.Enqueue(Emoticon.Laugh);
+        emoticonQueue.Enqueue(Emoticon.Smile);
+        emoticonQueue.Enqueue(Emoticon.Cry);
         emoticonQueue.Enqueue(Emoticon.Angry);
-        emoticonQueue.Enqueue(Emoticon.Surprised);
-        emoticonQueue.Enqueue(Emoticon.Disgusted);
-        emoticonQueue.Enqueue(Emoticon.Fearful);
-        emoticonQueue.Enqueue(Emoticon.Neutral);
     }
 
     // Send the first emoticon in the queue to the user. 
@@ -34,27 +32,24 @@ public class ReceiveEmoticon : MonoBehaviour
 
         //make vibration calls here corresponding with each emoticon
         switch(emoticon){
-            case Emoticon.Happy:
-                Debug.Log("Happy");
+            case Emoticon.Like:
+                Debug.Log("Like");
                 Taptic.Medium(); //Follow the calls from the documentation - Taptic.Medium() is just an example
                 break;
-            case Emoticon.Sad:
-                Debug.Log("Sad");
+            case Emoticon.Heart:
+                Debug.Log("Heart");
+                break;
+            case Emoticon.Laugh:
+                Debug.Log("Laugh");
+                break;
+            case Emoticon.Smile:
+                Debug.Log("Smile");
+                break;
+            case Emoticon.Cry:
+                Debug.Log("Cry");
                 break;
             case Emoticon.Angry:
-                Debug.Log("Angry");
-                break;
-            case Emoticon.Surprised:
-                Debug.Log("Surprised");
-                break;
-            case Emoticon.Disgusted:
-                Debug.Log("Disgusted");
-                break;
-            case Emoticon.Fearful:
-                Debug.Log("Fearful");
-                break;
-            case Emoticon.Neutral:
-                Debug.Log("Neutral");
+                Debug.Log("Cry");
                 break;
         }
     }
