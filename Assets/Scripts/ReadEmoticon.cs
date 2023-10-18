@@ -83,13 +83,17 @@ public class ReadEmoticon : MonoBehaviour
         // Interpret queue of gestures and pattern-match to known gestures. If a match is found, log
         // the matched emoticon.
         while (GestureQueue.Count > 0) {
-            TapData[] currentGesture = GestureQueue.Dequeue();
+            TapLength[] currentGesture = GestureQueue.Dequeue().ToArray();
             for (int i = 0; i < GestureMap.Length; i++) {
-                if (currentGesture.SequenceEqual(GestureMap[i])) {
-                    Debug.Log(EmoticonMap[i]);
-                    break;
-                } else if (i == GestureMap.Length - 1) {
-                    Debug.Log("Unknown");
+                if (GestureMap.Length == currentGesture.Length) {
+                    for (int j = 0; j < GestureMap.Length; j++) {
+                        if (GestureMap[i][j] != currentGesture[j]) {
+                            break;
+                        }
+                        if (j == GestureMap.Length - 1) {
+                            Debug.Log(EmoticonMap[i]);
+                        }
+                    }
                 }
             }
         }

@@ -31,8 +31,8 @@ public class SendEmoticon : MonoBehaviour
 
     public struct TapData
     {
-        float startTime;
-        float endTime;
+        public float startTime;
+        public float endTime;
     }
 
     private Queue<TapData> tapQueue = new Queue<TapData>();

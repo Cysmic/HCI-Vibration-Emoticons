@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
         else if (gameState == GameState.ReadingEmoticons)
         {
             sendEmoticon.enabled = false;
-            readEmoticon.ReadEmoticons(sendEmoticon.GetGestures());
+            readEmoticon.ReadEmoticons(sendEmoticon.GetTaps());
         }
     }
 }
