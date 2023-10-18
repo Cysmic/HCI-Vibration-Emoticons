@@ -55,10 +55,12 @@ public class GameManager : MonoBehaviour
             //The data from the gestures should be sent back to the manager, which will then be given to the readEmoticon script
             sendEmoticon.enabled = true;
             playButton.SetActive(true);
+            sendEmoticon.Reset();
         }
         else if (gameState == GameState.ReadingEmoticons)
         {
             sendEmoticon.enabled = false;
+            readEmoticon.Reset();
             readEmoticon.ReadEmoticons(sendEmoticon.GetTaps());
         }
     }

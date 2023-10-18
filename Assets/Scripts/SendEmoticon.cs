@@ -37,6 +37,11 @@ public class SendEmoticon : MonoBehaviour
 
     private Queue<TapData> tapQueue = new Queue<TapData>();
 
+    void Start()
+    {
+        
+    }
+
     void Update()
     {
         if (Input.touchCount > 0) {
@@ -59,5 +64,10 @@ public class SendEmoticon : MonoBehaviour
     public TapData[] GetTaps()
     {
         return tapQueue.ToArray();
+    }
+
+    public void Reset()
+    {
+        tapQueue = new Queue<TapData>();
     }
 }
