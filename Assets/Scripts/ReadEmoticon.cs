@@ -103,7 +103,7 @@ public class ReadEmoticon : MonoBehaviour
         while (GestureQueue.Count > 0) {
             TapLength[] currentGesture = GestureQueue.Dequeue().ToArray();
             for (int i = 0; i < GestureMap.Length + 1; i++) {
-                if (matched == true) {
+                if (matched) {
                     matched = false;
                     break;
                 }
