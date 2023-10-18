@@ -31,11 +31,13 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("Starting Game");
         sendEmoticon.enabled = false;
     }
-
+    
     public void ChangeGameState()
     {
+        Debug.Log("Button Pressed: Changing Game State");
         gameState = gameState == GameState.ReadingEmoticons ? GameState.Idle : gameState + 1;
 
         if (gameState == GameState.ReceivingEmoticons)
