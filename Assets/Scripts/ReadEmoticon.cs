@@ -32,7 +32,7 @@ public class ReadEmoticon : MonoBehaviour
                                         new TapLength[1]{TapLength.Long}
     };
 
-    private string[] EmoticonMap = {"Happy", "Sad", "Angry", "Surprised", "Disgusted", "Fearful"};
+    private string[] EmoticonMap = {"Like", "Hearts", "Laugh", "Smile", "Crying", "Angry"};
 
     // Start is called before the first frame update
     void Start()
