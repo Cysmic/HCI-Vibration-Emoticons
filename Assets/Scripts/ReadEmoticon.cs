@@ -20,12 +20,12 @@ public class ReadEmoticon : MonoBehaviour
     }
 
     private Queue<List<TapLength>> GestureQueue = new Queue<List<TapLength>>();
-    private Queue<Emoticon> emoticonQueue = new Queue<Emoticon>();
     private float lastTapTime = 0;
+    private bool matched = false;
 
     private TapLength[][] GestureMap = new TapLength[6][]{
                                         new TapLength[2]{TapLength.Short, TapLength.Short},
-                                        new TapLength[8]{TapLength.Short, TapLength.Long, TapLength.Short, TapLength.Long, TapLength.Short, TapLength.Long, TapLength.Short, TapLength.Long, },
+                                        new TapLength[8]{TapLength.Short, TapLength.Long, TapLength.Short, TapLength.Long, TapLength.Short, TapLength.Long, TapLength.Short, TapLength.Long},
                                         new TapLength[3]{TapLength.Short, TapLength.Short, TapLength.Long},
                                         new TapLength[4]{TapLength.Short, TapLength.Short, TapLength.Long, TapLength.Long},
                                         new TapLength[6]{TapLength.Long, TapLength.Short, TapLength.Short, TapLength.Long, TapLength.Short, TapLength.Short},
@@ -62,12 +62,13 @@ public class ReadEmoticon : MonoBehaviour
     {
         List<TapLength> gesture = new List<TapLength>();
         Debug.Log("StartReadingEmoticons");
+        Debug.Log(string.Format("Taps recorded: {0}.", taps.Length));
 
         // Enqueue each gesture. A gesture is a list of TapLengths, where the threshold between a long
-        // and short tap is 0.25 seconds. The threshold for time between taps in the same gesture is 0.5
-        // seconds - beyond this, the next tap is considered a part of a new gesture.
+        // and short tap is 0.25 seconds. The threshold for time between taps in the same gesture is 1
+        // second - beyond this, the next tap is considered a part of a new gesture.
         for (int i = 0; i < taps.Length; i++) {
-            if (taps[i].startTime - lastTapTime > 0.5) {
+            if (taps[i].startTime - lastTapTime > 1) {
                 GestureQueue.Enqueue(gesture);
                 gesture = new List<TapLength>();
             }
@@ -84,18 +85,33 @@ public class ReadEmoticon : MonoBehaviour
         // the matched emoticon.
         while (GestureQueue.Count > 0) {
             TapLength[] currentGesture = GestureQueue.Dequeue().ToArray();
-            for (int i = 0; i < GestureMap.Length; i++) {
+            for (int i = 0; i < GestureMap.Length + 1; i++) {
+                if (matched) {
+                    matched = false;
+                    break;
+                }
+                if (i == GestureMap.Length && !matched) {
+                    Debug.Log("Gesture unknown");
+                    break;
+                }
                 if (GestureMap[i].Length == currentGesture.Length) {
                     for (int j = 0; j < GestureMap[i].Length; j++) {
                         if (GestureMap[i][j] != currentGesture[j]) {
                             break;
                         }
-                        if (j == GestureMap.Length - 1) {
+                        if (j == GestureMap[i].Length - 1) {
                             Debug.Log(EmoticonMap[i]);
+                            matched = true;
+
                         }
                     }
                 }
             }
         }
+    }
+
+    public void Reset()
+    {
+        GestureQueue = new Queue<List<TapLength>>();
     }
 }
