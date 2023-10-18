@@ -4,20 +4,33 @@ using UnityEngine;
 
 public class ReadEmoticon : MonoBehaviour
 {
-    private enum Emoticon {
-        Happy,
-        Sad,
-        Angry,
-        Surprised,
-        Disgusted,
-        Fearful,
-        Neutral
-    }
-
     private enum TapLength {
         Short,
         Long
     }
+
+    [SerializeField]
+    private GameObject Like;
+
+    [SerializeField]
+    private GameObject Heart;
+
+    [SerializeField]
+    private GameObject Laugh;
+
+    [SerializeField]
+    private GameObject Smile;
+
+    [SerializeField]
+    private GameObject Cry;
+
+    [SerializeField]
+    private GameObject Angry;
+
+    [SerializeField]
+    private GameObject Unknown;
+
+    private GameObject currentlyDisplayedEmoticon;
 
     private Queue<List<TapLength>> GestureQueue = new Queue<List<TapLength>>();
     private float lastTapTime = 0;
@@ -32,12 +45,12 @@ public class ReadEmoticon : MonoBehaviour
                                         new TapLength[1]{TapLength.Long}
     };
 
-    private string[] EmoticonMap = {"Like", "Hearts", "Laugh", "Smile", "Crying", "Angry"};
+    private GameObject[] EmoticonMap;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        EmoticonMap = new GameObject[] { Like, Heart, Laugh, Smile, Cry, Angry };
     }
 
     // Update is called once per frame
@@ -48,7 +61,10 @@ public class ReadEmoticon : MonoBehaviour
 
     public void SetEmoticonDisplayOff()
     {
-        //Turn off all emoticons
+        if (currentlyDisplayedEmoticon != null){
+            Debug.Log("SetEmoticonDisplayOff");
+            currentlyDisplayedEmoticon.SetActive(false);
+        }
     }
 
     //This is where the ml or rhythm detection should occur.
@@ -92,6 +108,8 @@ public class ReadEmoticon : MonoBehaviour
                 }
                 if (i == GestureMap.Length && !matched) {
                     Debug.Log("Gesture unknown");
+                    Unknown.SetActive(true);
+                    currentlyDisplayedEmoticon = Unknown;
                     break;
                 }
                 if (GestureMap[i].Length == currentGesture.Length) {
@@ -100,9 +118,10 @@ public class ReadEmoticon : MonoBehaviour
                             break;
                         }
                         if (j == GestureMap[i].Length - 1) {
-                            Debug.Log(EmoticonMap[i]);
+                            Debug.Log("Emoticon Displayed");
+                            EmoticonMap[i].SetActive(true);
+                            currentlyDisplayedEmoticon = EmoticonMap[i];
                             matched = true;
-
                         }
                     }
                 }

@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
     private GameObject playButton;
 
     [SerializeField]
+    private GameObject endReadEmoticonButton;
+
+    [SerializeField]
     private SendEmoticon sendEmoticon;
 
     [SerializeField]
@@ -42,9 +45,13 @@ public class GameManager : MonoBehaviour
         
         Debug.Log("ChangeGameState to: " + gameState.ToString());
 
-        if (gameState == GameState.ReceivingEmoticons)
+        if (gameState == GameState.Idle)
         {
-            playButton.SetActive(false);
+            endReadEmoticonButton.SetActive(false);
+            playButton.SetActive(true);
+        }
+        else if (gameState == GameState.ReceivingEmoticons)
+        {
             receiveEmoticon.ReceiveEmoticons();
             ChangeGameState(); //might need to move this to ReceiveEmoticons.
         }
@@ -54,12 +61,15 @@ public class GameManager : MonoBehaviour
             //Once they have completed their gestures/taps, they can press the triangle on the bottom right to change the gamestate
             //The data from the gestures should be sent back to the manager, which will then be given to the readEmoticon script
             sendEmoticon.enabled = true;
-            playButton.SetActive(true);
             sendEmoticon.Reset();
         }
         else if (gameState == GameState.ReadingEmoticons)
         {
             sendEmoticon.enabled = false;
+            
+            playButton.SetActive(false);
+            endReadEmoticonButton.SetActive(true);
+
             readEmoticon.Reset();
             readEmoticon.ReadEmoticons(sendEmoticon.GetTaps());
         }
