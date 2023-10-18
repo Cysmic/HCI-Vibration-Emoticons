@@ -13,10 +13,13 @@ public class ReceiveEmoticon : MonoBehaviour
         Angry
     }
 
+    private int group = 1; // 1 or 2, group 1 is purely magnitude-based, group 2 is rhythm-based
+
     private Queue<Emoticon> emoticonQueue = new Queue<Emoticon>();
 
     // Initialize the queue with all the emoticons
     void Start(){
+        Debug.Log("Initializing Emoticons");
         emoticonQueue.Enqueue(Emoticon.Like);
         emoticonQueue.Enqueue(Emoticon.Heart);
         emoticonQueue.Enqueue(Emoticon.Laugh);
@@ -35,33 +38,88 @@ public class ReceiveEmoticon : MonoBehaviour
         switch(emoticon){
             case Emoticon.Like:
                 Debug.Log("Like");
-                Taptic.Default(); //Follow the calls from the documentation - Taptic.Medium() is just an example
-                Taptic.Default();
+                if (group == 1)
+                {
+                    Taptic.Default();
+                    Taptic.Default();
+                } else if (group == 2)
+                {
+                    Taptic.Success();
+                    Taptic.Success();
+                }
                 break;
             case Emoticon.Heart:
                 Debug.Log("Heart");
-                Taptic.Light();
-                Taptic.Light();
+                if (group == 1)
+                {
+                    Taptic.Light();
+                    Taptic.Light();
+                }
+                else if (group == 2)
+                {
+                    for (int i = 0; i < 4; i++) {
+                        Taptic.Light();
+                        Taptic.Heavy();
+                    }
+                }
                 break;
             case Emoticon.Laugh:
                 Debug.Log("Laugh");
-                Taptic.Heavy();
-                Taptic.Heavy();
+                if (group == 1)
+                {
+                    Taptic.Heavy();
+                    Taptic.Heavy();
+                }
+                else if (group == 2)
+                {
+                    Taptic.Light();
+                    Taptic.Light();
+                    Taptic.Heavy();
+                }
                 break;
             case Emoticon.Smile:
                 Debug.Log("Smile");
-                Taptic.Success();
-                Taptic.Success();
+                if (group == 1)
+                {
+                    Taptic.Success();
+                    Taptic.Success();
+                }
+                else if (group == 2)
+                {
+                    Taptic.Light();
+                    Taptic.Light();
+                    Taptic.Medium();
+                    Taptic.Heavy();
+                }
                 break;
             case Emoticon.Cry:
                 Debug.Log("Cry");
-                Taptic.Medium();
-                Taptic.Medium();
+                if (group == 1)
+                {
+                    Taptic.Medium();
+                    Taptic.Medium();
+                }
+                else if (group == 2)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Taptic.Heavy();
+                        Taptic.Light();
+                        Taptic.Light();
+                    }
+                }
                 break;
             case Emoticon.Angry:
                 Debug.Log("Angry");
-                Taptic.Warning();
-                Taptic.Warning();
+                if (group == 1)
+                {
+                    Taptic.Warning();
+                    Taptic.Warning();
+                }
+                else if (group == 2)
+                {
+                    Taptic.Warning();
+                }
                 break;
         }
     }
