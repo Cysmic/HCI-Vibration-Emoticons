@@ -79,8 +79,8 @@ public class SendEmoticon : MonoBehaviour
         }
     }
 
-    public GestureData[] GetGestures()
+    public TapData[] GetTaps()
     {
-        return gestureQueue.ToArray();
+        return tapQueue.ToArray();
     }
 }
