@@ -81,14 +81,14 @@ public class ReadEmoticon : MonoBehaviour
         Debug.Log(string.Format("Taps recorded: {0}.", taps.Length));
 
         // Enqueue each gesture. A gesture is a list of TapLengths, where the threshold between a long
-        // and short tap is 0.25 seconds. The threshold for time between taps in the same gesture is 1
+        // and short tap is 0.15 seconds. The threshold for time between taps in the same gesture is 1
         // second - beyond this, the next tap is considered a part of a new gesture.
         for (int i = 0; i < taps.Length; i++) {
-            if (taps[i].startTime - lastTapTime > 1) {
+            if (taps[i].startTime - lastTapTime > 1 && i != 0) {
                 GestureQueue.Enqueue(gesture);
                 gesture = new List<TapLength>();
             }
-            if (taps[i].endTime - taps[i].startTime < 0.25) {
+            if (taps[i].endTime - taps[i].startTime < 0.15) {
                 gesture.Add(TapLength.Short);
             } else {
                 gesture.Add(TapLength.Long);
@@ -99,6 +99,7 @@ public class ReadEmoticon : MonoBehaviour
 
         // Interpret queue of gestures and pattern-match to known gestures. If a match is found, log
         // the matched emoticon.
+
         while (GestureQueue.Count > 0) {
             TapLength[] currentGesture = GestureQueue.Dequeue().ToArray();
             for (int i = 0; i < GestureMap.Length + 1; i++) {
@@ -110,6 +111,11 @@ public class ReadEmoticon : MonoBehaviour
                     Debug.Log("Gesture unknown");
                     Unknown.SetActive(true);
                     currentlyDisplayedEmoticon = Unknown;
+                    List<string> tapList = new List<string>();
+                    foreach (TapLength tap in currentGesture) {
+                        tapList.Add(tap.ToString());
+                    }
+                    Debug.Log(string.Join(", ", tapList));
                     break;
                 }
                 if (GestureMap[i].Length == currentGesture.Length) {
@@ -122,6 +128,7 @@ public class ReadEmoticon : MonoBehaviour
                             EmoticonMap[i].SetActive(true);
                             currentlyDisplayedEmoticon = EmoticonMap[i];
                             matched = true;
+                            break;
                         }
                     }
                 }
