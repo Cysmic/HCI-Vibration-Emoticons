@@ -86,7 +86,7 @@ public class ReadEmoticon : MonoBehaviour
             TapLength[] currentGesture = GestureQueue.Dequeue().ToArray();
             for (int i = 0; i < GestureMap.Length; i++) {
                 if (GestureMap[i].Length == currentGesture.Length) {
-                    for (int j = 0; j < GestureMap.Length; j++) {
+                    for (int j = 0; j < GestureMap[i].Length; j++) {
                         if (GestureMap[i][j] != currentGesture[j]) {
                             break;
                         }
