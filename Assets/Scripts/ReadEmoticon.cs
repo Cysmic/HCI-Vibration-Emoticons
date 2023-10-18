@@ -81,14 +81,14 @@ public class ReadEmoticon : MonoBehaviour
         Debug.Log(string.Format("Taps recorded: {0}.", taps.Length));
 
         // Enqueue each gesture. A gesture is a list of TapLengths, where the threshold between a long
-        // and short tap is 0.25 seconds. The threshold for time between taps in the same gesture is 1
+        // and short tap is 0.15 seconds. The threshold for time between taps in the same gesture is 1
         // second - beyond this, the next tap is considered a part of a new gesture.
         for (int i = 0; i < taps.Length; i++) {
             if (taps[i].startTime - lastTapTime > 1 && i != 0) {
                 GestureQueue.Enqueue(gesture);
                 gesture = new List<TapLength>();
             }
-            if (taps[i].endTime - taps[i].startTime < 0.25) {
+            if (taps[i].endTime - taps[i].startTime < 0.15) {
                 gesture.Add(TapLength.Short);
             } else {
                 gesture.Add(TapLength.Long);
