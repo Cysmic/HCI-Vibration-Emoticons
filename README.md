@@ -2,7 +2,7 @@
 Creating an emoticon app for ios that allows users to receive/send emoticons without visual/audio cue
 
 # Image Classification
-Image classification was done using **CoreML**. It uses data sourced from [Google Quick! Draw](https://quickdraw.withgoogle.com/data) for hand-drawn `28 x 28` shapes (ear, line, circle, triangle, cloud, zigzag).
+Image classification was done using **CoreML**. It uses data sourced from [Google Quick! Draw](https://quickdraw.withgoogle.com/data) for hand-drawn `28 x 28` shapes (ear, line, circle, triangle, cloud, zigzag). We train two independent models on 16k and 60k training points respectively.
 
 ## Converting from `*.npy` to `.png`
 ```python
@@ -217,3 +217,104 @@ def index():
 if __name__ == "__main__":
     app.run(debug=True)
 ```
+
+#### Canvas.html
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            min-width: 100vw;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        canvas{ border: 1px solid black; }
+        button {
+            padding: 10px 20px;
+            border: 1px solid black;
+            border-radius: 5px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #eee;
+        }
+        span {
+            margin: 10px;
+            font-size: 20px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <canvas width="1200" height="1200" style="scale: 0.3; position: absolute; transform: translateY(-500px);" id="canvas"></canvas>
+    <span id="shape" style="margin-top: 200px;">No shape</span>
+    <button id="new">New shape</button>
+    <script>
+        const $newButton = document.querySelector("#new");
+        const $shapeLabel = document.querySelector("#shape");
+
+        const $canvas = document.querySelector("#canvas");
+        const ctx = $canvas.getContext("2d");
+        ctx.fillStyle = "#111";
+        ctx.fillRect(0, 0, $canvas.width, $canvas.height);
+
+        $blankImage = ctx.getImageData(0, 0, $canvas.width, $canvas.height);
+        $canvas.addEventListener("mousedown", (e) => {
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+            $canvas.addEventListener("mousemove", draw);
+        });
+        $canvas.addEventListener("mouseup", (e) => {
+            $canvas.removeEventListener("mousemove", draw);
+            ctx.stroke();
+            makePrediction();
+        });
+        function draw(e) {
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 15;
+            ctx.lineCap = "round";
+            ctx.miterLimit = 3;
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        }
+        async function makePrediction() {
+            const image = ctx.getImageData(0, 0, $canvas.width, $canvas.height);
+            canvas.toBlob(async (blob) => {
+                const formData = new FormData();
+                formData.append("token", "0c8HLwy59MuA9QOnp9JCBQ");
+                formData.append("image", blob, "image.png");
+                try {
+                    const response = await fetch("/predict", {
+                        method: "POST",
+                        body: formData
+                    })
+                    const data = await response.text();
+                    $shapeLabel.innerHTML = data.split(",").join("<br/>")
+                } catch {
+                    alert("Something went wrong")
+                }
+            })
+        }
+
+        $newButton.addEventListener("click", () => {
+            ctx.putImageData($blankImage, 0, 0);
+            $shapeLabel.textContent = "No shape";
+        });
+    </script>
+</body>
+</html>
+```
+### Classifier Results
+<img width="200" alt="Screenshot 2023-10-18 at 7 36 16 PM" src="https://github.com/Cysmic/HCI-Vibration-Emoticons/assets/51462341/40ec4f64-a258-4ee1-98df-57e2b022a2dd">
+<img width="200" alt="Screenshot 2023-10-18 at 7 35 58 PM" src="https://github.com/Cysmic/HCI-Vibration-Emoticons/assets/51462341/3efedea1-ef8d-41ca-8245-a47c91d9da50">
+<img width="200" alt="Screenshot 2023-10-18 at 7 35 46 PM" src="https://github.com/Cysmic/HCI-Vibration-Emoticons/assets/51462341/ef11c322-bbdc-42e4-906d-edd9657659b2">
+<img width="200" alt="Screenshot 2023-10-18 at 7 35 35 PM" src="https://github.com/Cysmic/HCI-Vibration-Emoticons/assets/51462341/c33e4891-bb95-4b28-be4f-6363306e0757">
+<img width="200" alt="Screenshot 2023-10-18 at 7 35 24 PM" src="https://github.com/Cysmic/HCI-Vibration-Emoticons/assets/51462341/b37d9461-c7ed-4c0d-a6b8-9676abe1cd48">
+<img width="200" alt="Screenshot 2023-10-18 at 7 35 13 PM" src="https://github.com/Cysmic/HCI-Vibration-Emoticons/assets/51462341/47746381-0fe2-44f2-85e8-6fb6cdc30987">
