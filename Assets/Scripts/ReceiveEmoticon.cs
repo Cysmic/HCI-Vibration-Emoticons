@@ -40,6 +40,11 @@ public class ReceiveEmoticon : MonoBehaviour
         emoticonQueue.Enqueue(Emoticon.Angry);
     }
 
+    public void ChangeEmoticonGroup(int newGroup)
+    {
+        group = newGroup;
+    }
+
     IEnumerator Wait(float time)
     {
         yield return new WaitForSeconds(time);

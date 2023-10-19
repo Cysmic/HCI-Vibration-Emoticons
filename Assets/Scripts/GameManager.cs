@@ -23,6 +23,16 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private ReadEmoticon readEmoticon;
 
+    [SerializeField]
+    private GameObject Toggle1;
+
+    [SerializeField]
+    private GameObject Toggle2;
+
+    private int receivingEmoticonGroup = 1;
+
+    private int sendingEmoticonGroup = 1;
+
     enum GameState
     {
         Idle,
@@ -31,6 +41,38 @@ public class GameManager : MonoBehaviour
         ReadingEmoticons
     }
 
+    public void ChangeReceivingEmoticonGroup()
+    {
+        if (receivingEmoticonGroup == 1)
+        {
+            receivingEmoticonGroup = 2;
+        }
+        else
+        {
+            receivingEmoticonGroup = 1;
+        }
+        receiveEmoticon.ChangeEmoticonGroup(receivingEmoticonGroup);
+    }
+
+    public void ChangeSendingEmoticonGroup()
+    {
+        if (sendingEmoticonGroup == 1)
+        {
+            sendingEmoticonGroup = 2;
+        }
+        else
+        {
+            sendingEmoticonGroup = 1;
+        }
+        sendEmoticon.ChangeEmoticonGroup(sendingEmoticonGroup);
+    }
+
+    public void TurnOffToggles()
+    {
+        Toggle1.SetActive(false);
+        Toggle2.SetActive(false);
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -65,13 +107,18 @@ public class GameManager : MonoBehaviour
         }
         else if (gameState == GameState.ReadingEmoticons)
         {
-            sendEmoticon.enabled = false;
-            
             playButton.SetActive(false);
             endReadEmoticonButton.SetActive(true);
 
-            readEmoticon.Reset();
-            readEmoticon.ReadEmoticons(sendEmoticon.GetTaps());
+            if (sendingEmoticonGroup == 1)
+            {
+                readEmoticon.Reset();
+                readEmoticon.ReadEmoticons(sendEmoticon.GetTaps());
+            }
+            else{
+                StartCoroutine(readEmoticon.CallImageClassifier(sendEmoticon.GetImageOfGesture()));
+            }
+            sendEmoticon.enabled = false;
         }
     }
 }
