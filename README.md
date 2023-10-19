@@ -311,6 +311,10 @@ if __name__ == "__main__":
 </body>
 </html>
 ```
+
+### CV Shape Identification
+We also use CV to verify results for basic abstract shapes (circle, triangle).
+
 ### Classifier Results
 <img width="200" alt="Screenshot 2023-10-18 at 7 36 16 PM" src="https://github.com/Cysmic/HCI-Vibration-Emoticons/assets/51462341/40ec4f64-a258-4ee1-98df-57e2b022a2dd">
 <img width="200" alt="Screenshot 2023-10-18 at 7 35 58 PM" src="https://github.com/Cysmic/HCI-Vibration-Emoticons/assets/51462341/3efedea1-ef8d-41ca-8245-a47c91d9da50">
