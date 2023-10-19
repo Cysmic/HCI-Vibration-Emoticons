@@ -514,6 +514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 862986193d146f6449d50b80e405a87e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  group: 1
 --- !u!1 &171625142
 GameObject:
   m_ObjectHideFlags: 0
@@ -2296,15 +2297,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe0fa9bb870391a42b07062cb5197105, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameState: 0
-  playButton: {fileID: 839460879}
-  endReadEmoticonButton: {fileID: 171625142}
-  sendEmoticon: {fileID: 1368683505}
-  receiveEmoticon: {fileID: 144438772}
-  readEmoticon: {fileID: 384484175}
+
   Toggle1: {fileID: 1112329366}
   Toggle2: {fileID: 2035163504}
 --- !u!1 &1094312735
+
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2317,11 +2314,12 @@ GameObject:
   - component: {fileID: 1094312737}
   m_Layer: 5
   m_Name: Text (TMP) (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
+=======
+  - component: {fileID: 1232722111}
+  - component: {fileID: 1232722113}
+  - component: {fileID: 1232722112}
+  m_Layer: 5
+  m_Name: Text (TMP)
 --- !u!224 &1094312736
 RectTransform:
   m_ObjectHideFlags: 0
