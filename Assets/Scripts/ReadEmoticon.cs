@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 using UnityEngine;
 
 public class ReadEmoticon : MonoBehaviour
@@ -30,6 +31,8 @@ public class ReadEmoticon : MonoBehaviour
     [SerializeField]
     private GameObject Unknown;
 
+    private string emoticon = "unknown";
+
     private GameObject currentlyDisplayedEmoticon;
 
     private Queue<List<TapLength>> GestureQueue = new Queue<List<TapLength>>();
@@ -56,7 +59,7 @@ public class ReadEmoticon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void SetEmoticonDisplayOff()
@@ -64,6 +67,77 @@ public class ReadEmoticon : MonoBehaviour
         if (currentlyDisplayedEmoticon != null){
             Debug.Log("SetEmoticonDisplayOff");
             currentlyDisplayedEmoticon.SetActive(false);
+            currentlyDisplayedEmoticon = null;
+            emoticon = "unknown";
+        }
+    }
+
+
+    [System.Serializable]
+    public class APIResponse
+    {
+        public Model60kResponse model60k;
+    }
+
+    [System.Serializable]
+    public class Model60kResponse
+    {
+        public string prediction;
+    }
+
+    public IEnumerator CallImageClassifier(byte[] pngBytes)
+    {
+        string apiURL = "https://ngrok.omar-ibrahim.com/predict";
+
+        WWWForm form = new WWWForm();
+        form.AddField("token", "0c8HLwy59MuA9QOnp9JCBQ");
+        form.AddBinaryData("image", pngBytes, "image.png", "image/png");
+        form.AddField("json", "true");
+
+        UnityWebRequest www = UnityWebRequest.Post(apiURL, form);
+
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            APIResponse apiResponse = JsonUtility.FromJson<APIResponse>(www.downloadHandler.text);
+            string prediction = apiResponse.model60k.prediction.Trim().ToLower();
+
+            switch (prediction)
+            {
+                case "angry":
+                    currentlyDisplayedEmoticon = Angry;
+                    break;
+                case "cry":
+                    currentlyDisplayedEmoticon = Cry;
+                    break;
+                case "like":
+                    currentlyDisplayedEmoticon = Like;
+                    break;
+                case "laugh":
+                    currentlyDisplayedEmoticon = Laugh;
+                    break;
+                case "smile":
+                    currentlyDisplayedEmoticon = Smile;
+                    break;
+                case "heart":
+                    currentlyDisplayedEmoticon = Heart;
+                    break;
+                default:
+                    currentlyDisplayedEmoticon = Unknown;
+                    break;
+            }
+
+            if (currentlyDisplayedEmoticon != null)
+            {
+                currentlyDisplayedEmoticon.SetActive(true);
+            }
+            Debug.Log("Made API Call");
+            Debug.Log(currentlyDisplayedEmoticon.name);
+        }
+        else
+        {
+            Debug.LogError("Error during API call: " + www.error);
         }
     }
 

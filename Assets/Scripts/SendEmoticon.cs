@@ -8,26 +8,18 @@ public class SendEmoticon : MonoBehaviour
     private float startTime;
     private Vector2 startPosition;
 
-    //See Touch class in unity documentation
-    //https://docs.unity3d.com/ScriptReference/Touch.html
-    public struct GestureData
-    {
-        Vector2 deltaPosition;
-        float deltaTime;
-        TouchPhase phase;
-        Vector2 position;
-        int tapCount;
-    }
+    [SerializeField]
+    private GameObject linePrefab;
 
-    // private Queue<GestureData> gestureQueue = new Queue<GestureData>();
-    
-    //Records gestures of the users
-    //For now make a check to make sure the input is above a certain y coordinate (ie the y coordinate of the play button. can also add x coordinate check)
-    //This will be a rudimentary check to prevent the tap on the play button from being recorded as a gesture
-    //
-    //any gesture that occurs, add to the gestureQueue. Thats all that has to happen in here.
-    //
-    //Look at reference for touch I added above.
+    [SerializeField]
+    private GameObject PNG_Camera_Object;
+
+    [SerializeField]
+    private RenderTexture PNG_Texture;
+
+    private Line activeLine;
+
+    private int group = 1;
 
     public struct TapData
     {
@@ -37,28 +29,84 @@ public class SendEmoticon : MonoBehaviour
 
     private Queue<TapData> tapQueue = new Queue<TapData>();
 
-    void Start()
-    {
-        
-    }
-
     void Update()
     {
-        if (Input.touchCount > 0) {
-            currentTouch = Input.GetTouch(0);
-            
-            //if (currentTouch.position.Y < buttonY) {return;}
+        if (group == 1){ //Group 1
+            if (Input.touchCount > 0) {
+                currentTouch = Input.GetTouch(0);
+                
+                //if (currentTouch.position.Y < buttonY) {return;}
 
-            if (currentTouch.phase == TouchPhase.Began) {
-                startTime = Time.time;
-            } else if (currentTouch.phase == TouchPhase.Ended) {
-                TapData currentTap = new TapData();
-                currentTap.startTime = startTime;
-                currentTap.endTime = Time.time;
+                if (currentTouch.phase == TouchPhase.Began) {
+                    startTime = Time.time;
+                } else if (currentTouch.phase == TouchPhase.Ended) {
+                    TapData currentTap = new TapData();
+                    currentTap.startTime = startTime;
+                    currentTap.endTime = Time.time;
 
-                tapQueue.Enqueue(currentTap);
+                    tapQueue.Enqueue(currentTap);
+                }
             }
         }
+        else{ //Group 2
+            if (Input.touchCount > 0){
+                Vector2 touchPosition = Input.GetTouch(0).position;
+
+                if (touchPosition.y < Screen.height * 1 / 8) return;
+
+                if (Input.GetTouch(0).phase == TouchPhase.Began)
+                {
+                    GameObject newLine = Instantiate(linePrefab);
+                    activeLine = newLine.GetComponent<Line>();
+                }
+
+                if (activeLine != null && Input.GetTouch(0).phase == TouchPhase.Moved)
+                {
+                    activeLine.UpdateLine(Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position));
+                }
+
+                if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                {
+                    activeLine = null;
+                }
+            }
+        }
+    }
+
+    public byte[] GetImageOfGesture()
+    {
+        PNG_Camera_Object.SetActive(true);
+        Camera PNG_Camera = PNG_Camera_Object.GetComponent<Camera>();
+        PNG_Camera.Render();
+
+        Texture2D texture2D = new Texture2D(PNG_Texture.width, PNG_Texture.height, TextureFormat.RGB24, false);
+        RenderTexture.active = PNG_Texture;
+        texture2D.ReadPixels(new Rect(0, 0, PNG_Texture.width, PNG_Texture.height), 0, 0);
+        texture2D.Apply();
+
+        //PNG_Camera.targetTexture = null;
+        GL.Clear(true, true, Color.clear);
+        RenderTexture.active = null;
+
+        byte[] pngData = texture2D.EncodeToPNG();
+
+        PNG_Camera_Object.SetActive(false);
+
+        GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
+
+        foreach (GameObject obj in allObjects)
+        {
+            if (obj.name == "Line(Clone)")
+            {
+                Destroy(obj);
+            }
+        }
+
+        return pngData;
+    }
+    public void ChangeEmoticonGroup(int sendingEmoticonGroup)
+    {
+        group = sendingEmoticonGroup;
     }
 
     public TapData[] GetTaps()
