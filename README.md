@@ -104,17 +104,34 @@ def train_model(data):
 # Web API
 To utilize `CoreML`, we create an API endpoint to connect it to our app using `Flask`.
 ```python
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, send_file
 import coremltools as ct
 from PIL import Image
 import json
 import cv2
 import numpy as np
+import os
 
 app = Flask(__name__)
 
 model = ct.models.MLModel("./static/Model60k.mlmodel")
 model_s = ct.models.MLModel("./static/Model16k.mlmodel")
+
+@app.route("/transform", methods=['POST'])
+def transform():
+    if request.method == 'POST':
+        token = request.form['token']
+        if token != "0c8HLwy59MuA9QOnp9JCBQ":
+            return "Invalid token"
+        f = request.files['image']
+        if f.filename.split(".")[-1] not in ["jpg", "jpeg", "png"]:
+            return "Invalid file type"
+        f.save(f.filename)
+        image = Image.open(f.filename)
+        image = image.resize((360, 360)) \
+                     .convert('RGB')
+        image.save(f.filename)
+        return send_file(f.filename, mimetype='image/'+f.filename.split(".")[-1])
 
 def detect_abstract_shapes(filepath):
     img = cv2.imread(filepath)
@@ -148,10 +165,7 @@ def detect_abstract_shapes(filepath):
 def fmt_prediction(prediction):
     target = prediction["target"]
     confidence = prediction["targetProbability"][target]
-    if confidence < 0.5:
-        return "Unknown"
-    else:
-        return target
+    return target
 
 def get_confidence(prediction):
     target = prediction["target"]
@@ -180,12 +194,16 @@ def predict():
         if token != "0c8HLwy59MuA9QOnp9JCBQ":
             return "Invalid token"
         f = request.files['image']
+        if f.filename.split(".")[-1] not in ["jpg", "jpeg", "png"]:
+            return "Invalid file type"
+        f.filename = "temp." + str(os.urandom(8).hex()) + "." + f.filename.split(".")[-1]
         f.save(f.filename)
         image = Image.open(f.filename)
         image = image.resize((360, 360)) \
                      .convert('RGB')
         image.save(f.filename)
         shape = detect_abstract_shapes(f.filename)
+        os.remove(f.filename)
         if "json" in request.form:
             return jsonify({
                 "model60k": use_model(model, image, as_dict=True),
@@ -209,7 +227,15 @@ def index():
     <h1>CoreML Flask App</h1>
     <form action="/predict" method="post" enctype="multipart/form-data">
         <input type="hidden" name="token" value="0c8HLwy59MuA9QOnp9JCBQ">
-        <input type="file" name="image">
+        <input type="hidden" name="json" value="true">
+        <input type="file" name="image" accept="image/*">
+        <input type="submit" value="Submit">
+    </form>
+    <h2>Get transform result</h2>
+    <form action="/transform" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="token" value="0c8HLwy59MuA9QOnp9JCBQ">
+        <input type="hidden" name="json" value="true">
+        <input type="file" name="image" accept="image/*">
         <input type="submit" value="Submit">
     </form>
     """
