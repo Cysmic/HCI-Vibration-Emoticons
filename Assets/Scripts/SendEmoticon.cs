@@ -84,7 +84,8 @@ public class SendEmoticon : MonoBehaviour
         texture2D.ReadPixels(new Rect(0, 0, PNG_Texture.width, PNG_Texture.height), 0, 0);
         texture2D.Apply();
 
-        PNG_Camera.targetTexture = null;
+        //PNG_Camera.targetTexture = null;
+        GL.Clear(true, true, Color.clear);
         RenderTexture.active = null;
 
         byte[] pngData = texture2D.EncodeToPNG();
