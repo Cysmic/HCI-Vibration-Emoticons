@@ -59,10 +59,7 @@ public class ReadEmoticon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (emoticon != "unknown")
-        {
 
-        }
     }
 
     public void SetEmoticonDisplayOff()
@@ -70,6 +67,7 @@ public class ReadEmoticon : MonoBehaviour
         if (currentlyDisplayedEmoticon != null){
             Debug.Log("SetEmoticonDisplayOff");
             currentlyDisplayedEmoticon.SetActive(false);
+            currentlyDisplayedEmoticon = null;
             emoticon = "unknown";
         }
     }
@@ -90,8 +88,13 @@ public class ReadEmoticon : MonoBehaviour
     public IEnumerator CallImageClassifier(byte[] pngBytes)
     {
         string apiURL = "https://ngrok.omar-ibrahim.com/predict";
-        UnityWebRequest www = UnityWebRequest.Put(apiURL, pngBytes);
-        www.SetRequestHeader("Content-Type", "image/png");
+
+        WWWForm form = new WWWForm();
+        form.AddField("token", "0c8HLwy59MuA9QOnp9JCBQ");
+        form.AddBinaryData("image", pngBytes, "image.png", "image/png");
+        form.AddField("json", "true");
+
+        UnityWebRequest www = UnityWebRequest.Post(apiURL, form);
 
         yield return www.SendWebRequest();
 
@@ -129,6 +132,8 @@ public class ReadEmoticon : MonoBehaviour
             {
                 currentlyDisplayedEmoticon.SetActive(true);
             }
+            Debug.Log("Made API Call");
+            Debug.Log(currentlyDisplayedEmoticon.name);
         }
         else
         {

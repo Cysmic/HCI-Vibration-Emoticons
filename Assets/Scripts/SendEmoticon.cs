@@ -50,6 +50,10 @@ public class SendEmoticon : MonoBehaviour
         }
         else{ //Group 2
             if (Input.touchCount > 0){
+                Vector2 touchPosition = Input.GetTouch(0).position;
+
+                if (touchPosition.y < Screen.height * 1 / 8) return;
+
                 if (Input.GetTouch(0).phase == TouchPhase.Began)
                 {
                     GameObject newLine = Instantiate(linePrefab);
@@ -86,6 +90,16 @@ public class SendEmoticon : MonoBehaviour
         byte[] pngData = texture2D.EncodeToPNG();
 
         PNG_Camera_Object.SetActive(false);
+
+        GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
+
+        foreach (GameObject obj in allObjects)
+        {
+            if (obj.name == "Line(Clone)")
+            {
+                Destroy(obj);
+            }
+        }
 
         return pngData;
     }
