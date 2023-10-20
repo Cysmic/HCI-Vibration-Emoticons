@@ -212,21 +212,17 @@ public class ReceiveEmoticon : MonoBehaviour
                 }
                 else if (group == 2)
                 {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        Debug.Log("Numbering Group: 5 Vibrations");
-                        Handheld.Vibrate();
-                        yield return new WaitForSeconds(0.8f);
-                        Handheld.Vibrate();
-                        yield return new WaitForSeconds(0.8f);
-                        Handheld.Vibrate();
-                        yield return new WaitForSeconds(0.8f);
-                        Handheld.Vibrate();
-                        yield return new WaitForSeconds(0.8f);
-                        Handheld.Vibrate();
-                        yield return new WaitForSeconds(0.8f);
-                        Handheld.Vibrate();
-                    }
+                    Debug.Log("Numbering Group: 5 Vibrations");
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
                 }
                 break;
             case Emoticon.Angry:
@@ -237,7 +233,7 @@ public class ReceiveEmoticon : MonoBehaviour
                     for (int i = 0; i < 5; i++)
                     {
                         Handheld.Vibrate();
-                        yield return new WaitForSeconds(0.5f);
+                        yield return new WaitForSeconds(0.8f);
                     }
                 }
                 else if (group == 2)
@@ -255,7 +251,6 @@ public class ReceiveEmoticon : MonoBehaviour
                     yield return new WaitForSeconds(0.8f);
                     Handheld.Vibrate();
                     yield return new WaitForSeconds(0.8f);
-                    Handheld.Vibrate();
                 }
                 break;
         }
