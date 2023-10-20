@@ -26,18 +26,34 @@ public class ReceiveEmoticon : MonoBehaviour
         Vibrate
     }
 
-    private int group = 1; // 1 or 2, group 1 is purely magnitude-based, group 2 is rhythm-based
+    private int group = 1;
 
     private Queue<Emoticon> emoticonQueue = new Queue<Emoticon>();
 
     // Initialize the queue with all the emoticons
     void Start(){
+        //first allow the user to learn all 6 emoticon vibrations
         emoticonQueue.Enqueue(Emoticon.Like);
         emoticonQueue.Enqueue(Emoticon.Heart);
         emoticonQueue.Enqueue(Emoticon.Laugh);
         emoticonQueue.Enqueue(Emoticon.Smile);
         emoticonQueue.Enqueue(Emoticon.Cry);
         emoticonQueue.Enqueue(Emoticon.Angry);
+
+
+        // then test them on a random 12
+        emoticonQueue.Enqueue(Emoticon.Smile);
+        emoticonQueue.Enqueue(Emoticon.Cry);
+        emoticonQueue.Enqueue(Emoticon.Like);
+        emoticonQueue.Enqueue(Emoticon.Heart);
+        emoticonQueue.Enqueue(Emoticon.Like);
+        emoticonQueue.Enqueue(Emoticon.Angry);
+        emoticonQueue.Enqueue(Emoticon.Laugh);
+        emoticonQueue.Enqueue(Emoticon.Angry);
+        emoticonQueue.Enqueue(Emoticon.Smile);
+        emoticonQueue.Enqueue(Emoticon.Laugh);
+        emoticonQueue.Enqueue(Emoticon.Cry);
+        emoticonQueue.Enqueue(Emoticon.Heart);
     }
 
     public void ChangeEmoticonGroup(int newGroup)
@@ -96,97 +112,150 @@ public class ReceiveEmoticon : MonoBehaviour
 
 
     // Send the first emoticon in the queue to the user. 
-    public void ReceiveEmoticons()
+    public IEnumerator ReceiveEmoticons()
     {
         Debug.Log("Receiving Emoticon");
         Emoticon emoticon = emoticonQueue.Dequeue(); //emoticon to send to the user
 
         //make vibration calls here corresponding with each emoticon
-        switch(emoticon){
+        switch (emoticon)
+        {
             case Emoticon.Like:
-                Debug.Log("Like");
+                Debug.Log("Like Emoji Received");
                 if (group == 1)
                 {
-                    StartCoroutine(WaitThenVibrate(0.0f, Vibration.Default));
-                    StartCoroutine(WaitThenVibrate(0.4f, Vibration.Default));
-                } else if (group == 2)
+                    Debug.Log("Rhythm Group: Clapping (10x heavy)");
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Debug.Log("Taptic Heavy");
+                        Taptic.Heavy();
+                        yield return new WaitForSeconds(0.25f);
+                    }
+                }
+                else if (group == 2)
                 {
-                    StartCoroutine(WaitThenVibrate(0.0f, Vibration.Success));
-                    StartCoroutine(WaitThenVibrate(0.4f, Vibration.Success));
+                    Debug.Log("Numbering Group: 1 Vibration");
+                    Handheld.Vibrate();
                 }
                 break;
             case Emoticon.Heart:
-                Debug.Log("Heart");
+                Debug.Log("Heart Emoji Received");
                 if (group == 1)
                 {
-                    StartCoroutine(WaitThenVibrate(0.0f, Vibration.Light));
-                    StartCoroutine(WaitThenVibrate(0.4f, Vibration.Light));
+                    Debug.Log("Rhythm Group: Heartbeats (4x success)");
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Taptic.Success();
+                        yield return new WaitForSeconds(1.0f);
+                    }
                 }
                 else if (group == 2)
                 {
-                    for (int i = 0; i < 4; i++) {
-                        StartCoroutine(WaitThenVibrate(0.0f, Vibration.Light));
-                        StartCoroutine(WaitThenVibrate(0.2f, Vibration.Heavy));
-                        StartCoroutine(Wait(1.3f));
-                    }
+                    Debug.Log("Numbering Group: 2 Vibrations");
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
                 }
                 break;
             case Emoticon.Laugh:
-                Debug.Log("Laugh");
+                Debug.Log("Laugh Emoji Received");
                 if (group == 1)
                 {
-                    StartCoroutine(WaitThenVibrate(0.0f, Vibration.Heavy));
-                    StartCoroutine(WaitThenVibrate(0.4f, Vibration.Heavy));
+                    Debug.Log("Rhythm Group: hahaha (3x heavy-heavy-heavy)");
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Taptic.Heavy();
+                        yield return new WaitForSeconds(0.5f);
+                        Taptic.Heavy();
+                        yield return new WaitForSeconds(0.5f);
+                        Taptic.Heavy();
+                        yield return new WaitForSeconds(1.5f);
+                    }
                 }
                 else if (group == 2)
                 {
-                    StartCoroutine(WaitThenVibrate(0.0f, Vibration.Light));
-                    StartCoroutine(WaitThenVibrate(0.2f, Vibration.Light));
-                    StartCoroutine(WaitThenVibrate(0.2f, Vibration.Heavy));
+                    Debug.Log("Numbering Group: 3 Vibrations");
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
                 }
                 break;
             case Emoticon.Smile:
-                Debug.Log("Smile");
+                Debug.Log("Smile Emoji Received");
                 if (group == 1)
                 {
-                    StartCoroutine(WaitThenVibrate(0.0f, Vibration.Success));
-                    StartCoroutine(WaitThenVibrate(0.4f, Vibration.Success));
+                    Debug.Log("Rhythm Group: smile (1x vibrate) ");
+                    Handheld.Vibrate();
                 }
                 else if (group == 2)
                 {
-                    StartCoroutine(WaitThenVibrate(0.0f, Vibration.Light));
-                    StartCoroutine(WaitThenVibrate(0.4f, Vibration.Light));
-                    StartCoroutine(WaitThenVibrate(0.5f, Vibration.Medium));
-                    StartCoroutine(WaitThenVibrate(0.6f, Vibration.Heavy));
+                    Debug.Log("Numbering Group: 4 Vibrations");
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
                 }
                 break;
             case Emoticon.Cry:
-                Debug.Log("Cry");
+                Debug.Log("Cry Emoji Received");
                 if (group == 1)
                 {
-                    StartCoroutine(WaitThenVibrate(0.0f, Vibration.Medium));
-                    StartCoroutine(WaitThenVibrate(0.4f, Vibration.Medium));
+                    Debug.Log("Rhythm Group: tears trickling down (2x failure)");
+                    Taptic.Failure();
+                    yield return new WaitForSeconds(1.0f);
+                    Taptic.Failure();
                 }
                 else if (group == 2)
                 {
                     for (int i = 0; i < 2; i++)
                     {
-                        StartCoroutine(WaitThenVibrate(0.0f, Vibration.Heavy));
-                        StartCoroutine(WaitThenVibrate(0.8f, Vibration.Light));
-                        StartCoroutine(WaitThenVibrate(0.2f, Vibration.Light));
+                        Debug.Log("Numbering Group: 5 Vibrations");
+                        Handheld.Vibrate();
+                        yield return new WaitForSeconds(0.8f);
+                        Handheld.Vibrate();
+                        yield return new WaitForSeconds(0.8f);
+                        Handheld.Vibrate();
+                        yield return new WaitForSeconds(0.8f);
+                        Handheld.Vibrate();
+                        yield return new WaitForSeconds(0.8f);
+                        Handheld.Vibrate();
+                        yield return new WaitForSeconds(0.8f);
+                        Handheld.Vibrate();
                     }
                 }
                 break;
             case Emoticon.Angry:
-                Debug.Log("Angry");
+                Debug.Log("Angry Emoji Received");
                 if (group == 1)
                 {
-                    StartCoroutine(WaitThenVibrate(0.0f, Vibration.Warning));
-                    StartCoroutine(WaitThenVibrate(0.4f, Vibration.Warning));
+                    Debug.Log("Rhythm Group: Stomping");
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Handheld.Vibrate();
+                        yield return new WaitForSeconds(0.5f);
+                    }
                 }
                 else if (group == 2)
                 {
-                    StartCoroutine(WaitThenVibrate(0.0f, Vibration.Warning));
+                    Debug.Log("Numbering Group: 6 Vibrations");
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
+                    yield return new WaitForSeconds(0.8f);
+                    Handheld.Vibrate();
                 }
                 break;
         }
