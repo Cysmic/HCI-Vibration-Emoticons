@@ -29,8 +29,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject Toggle2;
 
-    private int receivingEmoticonGroup = 1;
-
+    public int receivingEmoticonGroup = 1;
     private int sendingEmoticonGroup = 1;
 
     enum GameState
@@ -51,6 +50,7 @@ public class GameManager : MonoBehaviour
         {
             receivingEmoticonGroup = 1;
         }
+        Debug.Log("Changing Receiving Group to " + receivingEmoticonGroup);
         receiveEmoticon.ChangeEmoticonGroup(receivingEmoticonGroup);
     }
 
@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
         {
             sendingEmoticonGroup = 1;
         }
+        Debug.Log("Changing Sending Group to " + sendingEmoticonGroup);
         sendEmoticon.ChangeEmoticonGroup(sendingEmoticonGroup);
     }
 
@@ -94,7 +95,7 @@ public class GameManager : MonoBehaviour
         }
         else if (gameState == GameState.ReceivingEmoticons)
         {
-            receiveEmoticon.ReceiveEmoticons();
+            StartCoroutine(receiveEmoticon.ReceiveEmoticons());
             ChangeGameState(); //might need to move this to ReceiveEmoticons.
         }
         else if (gameState == GameState.SendingEmoticons)
