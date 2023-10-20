@@ -114,7 +114,7 @@ public class ReadEmoticon : MonoBehaviour
                 case "like":
                     currentlyDisplayedEmoticon = Like;
                     break;
-                case "laugh":
+                case "haha":
                     currentlyDisplayedEmoticon = Laugh;
                     break;
                 case "smile":
